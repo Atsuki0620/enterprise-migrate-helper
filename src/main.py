@@ -7,6 +7,7 @@ OpenAI Assistants APIを使用した基本的な接続テストを実行しま�
 import os
 import sys
 import time
+import traceback
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -28,6 +29,19 @@ def main():
         print(".envファイルを作成し、OPENAI_API_KEYを設定してください。", file=sys.stderr)
         sys.exit(1)
 
+    # APIキーから引用符（通常のものと特殊なUnicode文字）を削除
+    # '\u201c' = " (左ダブルクォーテーション)
+    # '\u201d' = " (右ダブルクォーテーション)
+    # '\u2018' = ' (左シングルクォーテーション)
+    # '\u2019' = ' (右シングルクォーテーション)
+    api_key = api_key.strip()
+    # 通常の引用符とUnicode引用符を削除
+    quote_chars = '"\'\u201c\u201d\u2018\u2019'
+    api_key = api_key.strip(quote_chars)
+
+    # クリーンアップされたAPIキーを環境変数にも設定（OpenAI SDKが直接参照する場合に備えて）
+    os.environ["OPENAI_API_KEY"] = api_key
+
     print("✓ 環境変数の読み込み完了\n")
 
     # 2. OpenAIクライアントの初期化
@@ -37,6 +51,7 @@ def main():
         print("✓ OpenAIクライアントの初期化完了\n")
     except Exception as e:
         print(f"エラー: OpenAIクライアントの初期化に失敗しました: {e}", file=sys.stderr)
+        traceback.print_exc()
         sys.exit(1)
 
     # 3. Assistantの作成
@@ -50,6 +65,7 @@ def main():
         print(f"✓ Assistantの作成完了 (ID: {assistant.id})\n")
     except Exception as e:
         print(f"エラー: Assistantの作成に失敗しました: {e}", file=sys.stderr)
+        traceback.print_exc()
         sys.exit(1)
 
     # 4. 新しいThreadの作成

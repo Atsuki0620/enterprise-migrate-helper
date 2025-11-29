@@ -52,6 +52,8 @@ cp .env.example .env
 OPENAI_API_KEY=sk-your-actual-api-key-here
 ```
 
+**重要:** APIキーは引用符で囲まずに設定してください。特に、特殊なUnicode引用符（""や''）を使用すると、エンコーディングエラーが発生する可能性があります。
+
 ## 実行方法
 
 基本的な接続テストを実行するには、以下のコマンドを実行します:
@@ -95,6 +97,28 @@ project-migration-agent/
 ├── .gitignore               # Git除外設定
 └── README.md                # このファイル
 ```
+
+## トラブルシューティング
+
+### Unicode エンコーディングエラー
+
+環境変数OPENAI_API_KEYに特殊なUnicode文字（引用符など）が含まれている場合、以下のようなエラーが発生する可能性があります:
+
+```
+UnicodeEncodeError: 'ascii' codec can't encode character '\u201c' in position 7
+```
+
+**解決策:** `.env`ファイルのAPIキーから、すべての引用符を削除してください。特に、特殊なUnicode引用符（""や''）ではなく、通常のASCII文字のみを使用してください。
+
+### 接続エラー
+
+ネットワーク制限のある環境では、OpenAI APIへの接続に失敗する可能性があります:
+
+```
+Connection error: Temporary failure in name resolution
+```
+
+**解決策:** インターネット接続を確認し、ファイアウォールやプロキシ設定を確認してください。
 
 ## ライセンス
 
