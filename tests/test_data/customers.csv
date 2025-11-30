@@ -1,0 +1,6 @@
+customer_id,name,age,email,registration_date
+1,山田太郎,25.0,yamada@example.com,2024-01-15
+2,佐藤花子,30.0,sato@example.com,2024-02-20
+3,鈴木一郎,,suzuki@example.com,2024-03-10
+4,田中美咲,28.0,,2024-04-05
+5,高橋健太,35.0,takahashi@example.com,2024-05-12
