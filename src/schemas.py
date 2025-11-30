@@ -51,3 +51,54 @@ class ProjectSchema(BaseModel):
     """
     project_name: Optional[str] = Field(None, description="プロジェクト名")
     tables: List[TableSchema] = Field(default_factory=list, description="テーブルスキーマのリスト")
+
+
+# ==================== スキーマ差分モデル ====================
+
+
+class ColumnDiff(BaseModel):
+    """
+    カラムレベルの差分情報を表現するモデル
+
+    Attributes:
+        table_name: 対象テーブル名
+        sample_column_name: サンプル側のカラム名（削除・リネームの場合に使用）
+        production_column_name: 本番側のカラム名（追加・リネームの場合に使用）
+        diff_type: 差分の種類（"added", "removed", "type_changed", "renamed"）
+        detail: 差分の詳細情報（型情報、推定理由など）
+    """
+    table_name: str = Field(..., description="対象テーブル名")
+    sample_column_name: Optional[str] = Field(None, description="サンプル側のカラム名")
+    production_column_name: Optional[str] = Field(None, description="本番側のカラム名")
+    diff_type: str = Field(..., description="差分の種類")
+    detail: Dict[str, Any] = Field(default_factory=dict, description="差分の詳細情報")
+
+
+class TableDiff(BaseModel):
+    """
+    テーブルレベルの差分情報を表現するモデル
+
+    Attributes:
+        table_name: 対象テーブル名
+        diff_type: 差分の種類（"added", "removed", "modified"）
+        column_diffs: カラムレベルの差分リスト（modified の場合のみ）
+    """
+    table_name: str = Field(..., description="対象テーブル名")
+    diff_type: str = Field(..., description="差分の種類")
+    column_diffs: List[ColumnDiff] = Field(default_factory=list, description="カラムレベルの差分リスト")
+
+
+class SchemaCompareResult(BaseModel):
+    """
+    スキーマ比較の結果全体を表現するモデル
+
+    Attributes:
+        sample_project: サンプルプロジェクトのスキーマ
+        production_project: 本番プロジェクトのスキーマ
+        table_diffs: テーブルレベルの差分リスト
+        summary: 差分の集計情報
+    """
+    sample_project: ProjectSchema = Field(..., description="サンプルプロジェクトのスキーマ")
+    production_project: ProjectSchema = Field(..., description="本番プロジェクトのスキーマ")
+    table_diffs: List[TableDiff] = Field(default_factory=list, description="テーブルレベルの差分リスト")
+    summary: Dict[str, Any] = Field(default_factory=dict, description="差分の集計情報")

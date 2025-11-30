@@ -11,7 +11,11 @@ from agents import Agent, Runner
 from openai import OpenAI, AzureOpenAI
 
 from src.tools.project_reader import read_project_overview
-from src.tools.data_analyzer import analyze_excel_csv_schema
+from src.tools.data_analyzer import (
+    analyze_excel_csv_schema,
+    compare_data_schemas,
+    report_analysis_result,
+)
 
 # Load environment variables
 load_dotenv()
@@ -87,7 +91,12 @@ Always be specific about data schemas, including column names, data types, and f
     agent = Agent(
         name="Project Analyzer",
         instructions=instructions,
-        tools=[read_project_overview, analyze_excel_csv_schema],
+        tools=[
+            read_project_overview,
+            analyze_excel_csv_schema,
+            compare_data_schemas,
+            report_analysis_result,
+        ],
         model=model
     )
 
